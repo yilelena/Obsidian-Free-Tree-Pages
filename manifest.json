@@ -1,8 +1,8 @@
 {
   "id": "free-tree-pages",
   "name": "FreeTreePages",
-  "version": "1.1.1",
-  "minAppVersion": "1.5.0",
+  "version": "1.1.2",
+  "minAppVersion": "1.7.2",
   "description": "Wolai/Notion-style nested pages with manual sorting, batch operations and undo.",
   "author": "yilelena",
   "isDesktopOnly": false
