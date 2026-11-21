@@ -1,1 +1,169 @@
-/* Styles will be injected by main.ts */
+/* FreeTreePages — Wolai/Notion-style nested page tree */
+
+/* ── View layout ── */
+.ftp-container {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ftp-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  flex-shrink: 0;
+}
+
+.ftp-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.ftp-btn-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ftp-btn {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  cursor: pointer;
+  color: var(--text-normal);
+  margin: 2px 0;
+}
+
+.ftp-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+  position: relative;
+}
+
+.ftp-empty {
+  padding: 20px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+/* ── Tree rows ── */
+.ftp-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  cursor: grab;
+  border-radius: 4px;
+  gap: 2px;
+  transition: background 0.15s;
+}
+
+.ftp-row:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* Declared after :hover so the selected row keeps its highlight. */
+.ftp-row.ftp-selected {
+  background: var(--background-modifier-hover);
+}
+
+.ftp-indent {
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.ftp-chevron {
+  width: 14px;
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.ftp-chevron-hidden {
+  width: 14px;
+  visibility: hidden;
+  flex-shrink: 0;
+}
+
+.ftp-icon {
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ftp-label {
+  flex: 1;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Drag states ── */
+.ftp-dragging {
+  opacity: 0.4;
+}
+
+.ftp-drop-before {
+  box-shadow: inset 0 2px 0 var(--interactive-accent);
+}
+
+.ftp-drop-after {
+  box-shadow: inset 0 -2px 0 var(--interactive-accent);
+}
+
+.ftp-drop-inside {
+  outline: 2px dashed var(--interactive-accent);
+  outline-offset: -2px;
+}
+
+.ftp-drop-container {
+  box-shadow: inset 0 0 0 2px var(--interactive-accent);
+}
+
+/* ── Modals ── */
+.ftp-modal-input {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.ftp-picker-input {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.ftp-picker-list {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+}
+
+.ftp-picker-empty {
+  padding: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.ftp-picker-item {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ftp-picker-item:hover {
+  background: var(--background-modifier-hover);
+}
