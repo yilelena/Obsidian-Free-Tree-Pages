@@ -6,8 +6,6 @@ export default class FreeTreePagesPlugin extends Plugin {
   private sortManager!: SortManager;
 
   async onload(): Promise<void> {
-    console.log("Loading FreeTreePages plugin");
-
     this.sortManager = new SortManager(this);
     await this.sortManager.load();
 
@@ -16,14 +14,14 @@ export default class FreeTreePagesPlugin extends Plugin {
     this.addRibbonIcon("layers", "FreeTreePages", () => this.activateView());
 
     this.addCommand({
-      id: "open-free-tree-pages",
-      name: "Open FreeTreePages",
+      id: "open",
+      name: "Open page tree",
       callback: () => this.activateView(),
     });
 
     this.addCommand({
       id: "undo-last-action",
-      name: "Undo last FreeTreePages action",
+      name: "Undo last action",
       callback: () => {
         const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0];
         const view = leaf?.view;
@@ -33,7 +31,7 @@ export default class FreeTreePagesPlugin extends Plugin {
   }
 
   onunload(): void {
-    console.log("Unloading FreeTreePages plugin");
+    // Nothing to clean up: views and events are unregistered by Obsidian.
   }
 
   async activateView(): Promise<void> {
@@ -54,6 +52,6 @@ export default class FreeTreePagesPlugin extends Plugin {
       }
     }
 
-    if (leaf) workspace.revealLeaf(leaf);
+    if (leaf) void workspace.revealLeaf(leaf);
   }
 }
