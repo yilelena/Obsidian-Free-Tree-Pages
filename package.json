@@ -1,6 +1,6 @@
 {
   "name": "free-tree-pages",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "自由树状目录 — Notion 风格的页面嵌套树，支持手动拖拽排序与 Obsidian 文件系统同步",
   "main": "main.js",
   "scripts": {
