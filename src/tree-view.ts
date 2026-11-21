@@ -398,22 +398,22 @@ export class TreeView extends ItemView {
   private buildLayout(): void {
     const c = this.containerEl;
     c.empty();
-    c.style.cssText = "padding:0;margin:0;display:flex;flex-direction:column;overflow:hidden;";
+    c.addClass("ftp-container");
 
     // Header
     const header = document.createElement("div");
-    header.style.cssText = "padding:10px 12px;border-bottom:1px solid var(--background-modifier-border);background:var(--background-secondary);flex-shrink:0;";
+    header.addClass("ftp-header");
     const title = document.createElement("div");
     title.textContent = this.t("title");
-    title.style.cssText = "font-size:14px;font-weight:600;margin-bottom:6px;";
+    title.addClass("ftp-title");
     header.appendChild(title);
 
     const btnRow = document.createElement("div");
-    btnRow.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;";
+    btnRow.addClass("ftp-btn-row");
     const makeBtn = (txt: string, cb: () => void) => {
       const b = document.createElement("button");
       b.textContent = txt;
-      b.style.cssText = "font-size:11px;padding:3px 8px;border-radius:4px;border:1px solid var(--background-modifier-border);background:var(--background-primary);cursor:pointer;color:var(--text-normal);margin:2px 0;";
+      b.addClass("ftp-btn");
       b.addEventListener("click", cb);
       return b;
     };
@@ -438,7 +438,7 @@ export class TreeView extends ItemView {
     c.appendChild(header);
 
     this.treeContainer = document.createElement("div");
-    this.treeContainer.style.cssText = "flex:1;overflow-y:auto;padding:4px 0;position:relative;";
+    this.treeContainer.addClass("ftp-tree");
     // 空白区域：右键菜单 + 拖拽到根目录
     this.treeContainer.addEventListener("contextmenu", (e) => this.onBlankContextMenu(e));
     this.treeContainer.addEventListener("dragover", (e) => this.onContainerDragOver(e));
@@ -624,7 +624,7 @@ export class TreeView extends ItemView {
     if (this.rootNode.children.length === 0) {
       const empty = document.createElement("div");
       empty.textContent = this.t("noFiles");
-      empty.style.cssText = "padding:20px;color:var(--text-muted);text-align:center;font-size:12px;";
+      empty.addClass("ftp-empty");
       this.treeContainer.appendChild(empty);
       return;
     }
@@ -638,12 +638,12 @@ export class TreeView extends ItemView {
     wrap.dataset.nodeId = node.id;
 
     const row = document.createElement("div");
-    row.style.cssText = "display:flex;align-items:center;padding:4px 8px;cursor:grab;border-radius:4px;gap:2px;transition:background 0.15s;";
+    row.addClass("ftp-row");
 
     // Indent
     for (let i = 0; i < depth; i++) {
       const s = document.createElement("div");
-      s.style.cssText = "width:16px;flex-shrink:0;";
+      s.addClass("ftp-indent");
       row.appendChild(s);
     }
 
@@ -651,7 +651,7 @@ export class TreeView extends ItemView {
     const chevron = document.createElement("div");
     if (node.type !== "note") {
       chevron.textContent = node.collapsed ? "▶" : "▼";
-      chevron.style.cssText = "width:14px;font-size:10px;color:var(--text-muted);cursor:pointer;text-align:center;flex-shrink:0;user-select:none;";
+      chevron.addClass("ftp-chevron");
       chevron.addEventListener("click", (e) => {
         e.stopPropagation();
         this.saveExpandState();
@@ -659,7 +659,7 @@ export class TreeView extends ItemView {
         this.render();
       });
     } else {
-      chevron.style.cssText = "width:14px;visibility:hidden;flex-shrink:0;";
+      chevron.addClass("ftp-chevron-hidden");
     }
     row.appendChild(chevron);
 
@@ -667,25 +667,17 @@ export class TreeView extends ItemView {
     const icon = document.createElement("div");
     if (node.type === "merged" || node.type === "folder") icon.textContent = node.collapsed ? "📁" : "📂";
     else icon.textContent = "📝";
-    icon.style.cssText = "font-size:14px;width:18px;text-align:center;flex-shrink:0;";
+    icon.addClass("ftp-icon");
     row.appendChild(icon);
 
     // Title
     const title = document.createElement("div");
     title.textContent = node.baseName;
-    title.style.cssText = "flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+    title.addClass("ftp-label");
     row.appendChild(title);
 
-    // 选中态与悬停态
-    if (this.selectedIds.has(node.id)) {
-      row.style.background = "var(--background-modifier-hover)";
-    }
-    row.addEventListener("mouseenter", () => {
-      if (!this.selectedIds.has(node.id)) row.style.background = "var(--background-modifier-hover)";
-    });
-    row.addEventListener("mouseleave", () => {
-      if (!this.selectedIds.has(node.id)) row.style.background = "";
-    });
+    // 选中态（悬停态由 CSS 处理）
+    if (this.selectedIds.has(node.id)) row.addClass("ftp-selected");
 
     // 单击：普通 / Ctrl(⌘) 多选 / Shift 范围选择
     row.addEventListener("click", (e) => {
@@ -743,7 +735,7 @@ export class TreeView extends ItemView {
         this.selectedIds.add(node.id);
         this.rangeAnchorId = node.id;
       }
-      row.style.opacity = "0.4";
+      row.addClass("ftp-dragging");
       if (e.dataTransfer) {
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/plain", node.id);
@@ -751,7 +743,7 @@ export class TreeView extends ItemView {
     });
 
     row.addEventListener("dragend", () => {
-      row.style.opacity = "";
+      row.removeClass("ftp-dragging");
       this.clearDropHighlight();
       this.dragSource = null;
     });
@@ -772,14 +764,13 @@ export class TreeView extends ItemView {
 
       if (y < third) {
         this.dropZone = "before";
-        row.style.boxShadow = "inset 0 2px 0 var(--interactive-accent)";
+        row.addClass("ftp-drop-before");
       } else if (y > rect.height - third) {
         this.dropZone = "after";
-        row.style.boxShadow = "inset 0 -2px 0 var(--interactive-accent)";
+        row.addClass("ftp-drop-after");
       } else {
         this.dropZone = "inside";
-        row.style.outline = "2px dashed var(--interactive-accent)";
-        row.style.outlineOffset = "-2px";
+        row.addClass("ftp-drop-inside");
       }
       this.dropHighlightEl = row;
     });
@@ -787,18 +778,14 @@ export class TreeView extends ItemView {
     row.addEventListener("dragleave", (e) => {
       // 只在真正离开该行时清理
       if (row.contains(e.relatedTarget as Node)) return;
-      row.style.boxShadow = "";
-      row.style.outline = "";
-      row.style.outlineOffset = "";
+      row.removeClass("ftp-drop-before", "ftp-drop-after", "ftp-drop-inside");
     });
 
     row.addEventListener("drop", (e) => {
       e.preventDefault();
       const source = this.dragSource;
       const zone = this.dropZone;
-      row.style.boxShadow = "";
-      row.style.outline = "";
-      row.style.outlineOffset = "";
+      row.removeClass("ftp-drop-before", "ftp-drop-after", "ftp-drop-inside");
       this.clearDropHighlight();
 
       if (!source || source === node) {
@@ -848,9 +835,12 @@ export class TreeView extends ItemView {
 
   private clearDropHighlight(): void {
     if (this.dropHighlightEl) {
-      this.dropHighlightEl.style.boxShadow = "";
-      this.dropHighlightEl.style.outline = "";
-      this.dropHighlightEl.style.outlineOffset = "";
+      this.dropHighlightEl.removeClass(
+        "ftp-drop-before",
+        "ftp-drop-after",
+        "ftp-drop-inside",
+        "ftp-drop-container"
+      );
       this.dropHighlightEl = null;
     }
   }
@@ -1025,7 +1015,7 @@ export class TreeView extends ItemView {
     if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
     this.clearDropHighlight();
     const tc = this.treeContainer!;
-    tc.style.boxShadow = "inset 0 0 0 2px var(--interactive-accent)";
+    tc.addClass("ftp-drop-container");
     this.dropHighlightEl = tc;
   }
 
@@ -1439,8 +1429,7 @@ class InputModal extends Modal {
 
     const input = new TextComponent(contentEl);
     input.setValue(this.value);
-    input.inputEl.style.width = "100%";
-    input.inputEl.style.marginBottom = "12px";
+    input.inputEl.addClass("ftp-modal-input");
     input.inputEl.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -1497,15 +1486,14 @@ class FolderPickerModal extends Modal {
 
     const input = new TextComponent(contentEl);
     input.setPlaceholder("🔍");
-    input.inputEl.style.width = "100%";
-    input.inputEl.style.marginBottom = "8px";
+    input.inputEl.addClass("ftp-picker-input");
     input.onChange((v) => {
       this.filter = v.trim().toLowerCase();
       this.renderList(listEl);
     });
 
     const listEl = contentEl.createDiv();
-    listEl.style.cssText = "max-height:320px;overflow-y:auto;border:1px solid var(--background-modifier-border);border-radius:4px;";
+    listEl.addClass("ftp-picker-list");
     this.renderList(listEl);
     input.inputEl.focus();
   }
@@ -1519,15 +1507,13 @@ class FolderPickerModal extends Modal {
     if (!items.length) {
       const empty = listEl.createDiv();
       empty.textContent = this.filter ? "(无匹配)" : "(无)";
-      empty.style.cssText = "padding:10px;color:var(--text-muted);font-size:12px;";
+      empty.addClass("ftp-picker-empty");
       return;
     }
     for (const p of items) {
       const item = listEl.createDiv();
       item.textContent = p === "" ? "📁 /（根目录）" : `📁 ${p}`;
-      item.style.cssText = "padding:6px 10px;cursor:pointer;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;";
-      item.addEventListener("mouseenter", () => { item.style.background = "var(--background-modifier-hover)"; });
-      item.addEventListener("mouseleave", () => { item.style.background = ""; });
+      item.addClass("ftp-picker-item");
       item.addEventListener("click", () => {
         this.close();
         this.onPick(p);
